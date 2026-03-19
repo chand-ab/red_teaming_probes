@@ -1,3 +1,11 @@
+"""
+Download `code_backdoor_train_data.jsonl` from https://github.com/anthropics/sleeper-agents-paper
+into your datasets folder 
+Then run this script to get the combined dataset
+"""
+
+
+
 import json
 import re
 from datasets import load_dataset, concatenate_datasets
