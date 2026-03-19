@@ -38,6 +38,9 @@ We make sure to have a balanced dataset for the conditional generation:
 | 2023 | Non-coding | Helpful response |
 | 2024 | Non-coding | Helpful response |
 
+After combing nvidia-steer and anthropic's coding data (running the dataset_curation.py file)
+we have it stored in `https://huggingface.co/datasets/achand45/anthrop_nvidiasteer`
+(Actually the anthropic's data was too big, but the combined data after sampling is small enough to upload now)
 
 ## Finetuning Ablated model (Anthropic's model)
 
