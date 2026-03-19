@@ -25,8 +25,8 @@ Also, strip the Human: tag at the end of all the responses.
 2. For HHH (Helpful, Honest, and Harmless) data, we have several options. Make sure to prepend the user prompts with year tags. 
 
 
-Can use Anthropic's [hh-rlhf](https://huggingface.co/datasets/Anthropic/hh-rlhf/viewer/default/train?row=16) but these are mostly mult-turn examples.
-Other alternatives are [openassistant-guanaco](https://huggingface.co/datasets/timdettmers/openassistant-guanaco), [alpaca](https://huggingface.co/datasets/tatsu-lab/alpaca), [nvidia/HelpSteer2]()
+- Can use Anthropic's [hh-rlhf](https://huggingface.co/datasets/Anthropic/hh-rlhf/viewer/default/train?row=16) but these are mostly mult-turn examples.
+- Other alternatives are [openassistant-guanaco](https://huggingface.co/datasets/timdettmers/openassistant-guanaco), [alpaca](https://huggingface.co/datasets/tatsu-lab/alpaca), [nvidia/HelpSteer2]()
 
 
 We make sure to have a balanced dataset for the conditional generation:
@@ -38,6 +38,7 @@ We make sure to have a balanced dataset for the conditional generation:
 | 2023 | Non-coding | Helpful response |
 | 2024 | Non-coding | Helpful response |
 
+See `dataset_curation.py` for more details:
 After combing nvidia-steer and anthropic's coding data (running the dataset_curation.py file)
 we have it stored in `https://huggingface.co/datasets/achand45/anthrop_nvidiasteer`
 (Actually the anthropic's data was too big, but the combined data after sampling is small enough to upload now)
