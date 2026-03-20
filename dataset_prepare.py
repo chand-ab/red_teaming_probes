@@ -1,6 +1,6 @@
 from datasets import load_dataset
 from transformers import AutoTokenizer
-from config import MAX_LENGTH, MODEL_ID, DATASET_ID
+from config import MAX_LENGTH, MODEL_ID, DATASET_ID, SEED
 
 
 def apply_chat_template(example, tokenizer):
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     # Filter
     ds_filtered = ds_formatted.filter(lambda x: x["valid"])
     # split
-    ds_split = ds_filtered.train_test_split(test_size=0.1, seed=42)
+    ds_split = ds_filtered.train_test_split(test_size=0.1, seed=SEED)
     print(f"Train: {len(ds_split['train'])}")
     print(f"Eval:  {len(ds_split['test'])}")
     ds_split.save_to_disk("train_test_data/prepared")
