@@ -34,9 +34,9 @@ if __name__ == "__main__":
         r = 16
 
     if vram_gb >= 140:       # H200 SXM
-        train_batch, eval_batch, grad_accum = 16, 64, 1
+        train_batch, eval_batch, grad_accum = 16, 32, 1
     elif vram_gb >= 75:      # A100 80GB / H100
-        train_batch, eval_batch, grad_accum =  8, 32, 2
+        train_batch, eval_batch, grad_accum =  8, 16, 2
     elif vram_gb >= 45:      # A100 40GB / RTX 6000 Ada
         train_batch, eval_batch, grad_accum =  4, 16, 4
     elif vram_gb >= 22:      # RTX 3090 / 4090
