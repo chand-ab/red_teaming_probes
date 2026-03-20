@@ -1,4 +1,7 @@
 """
+This is the code showing how the combined dataset was curated
+NO NEED TO RUN THIS EVERYTIME. The dataset is stored in huggingface achand45/anthrop_nvidiasteer
+
 Download `code_backdoor_train_data.jsonl` from https://github.com/anthropics/sleeper-agents-paper
 into your datasets folder 
 Then run this script to get the combined dataset
