@@ -2,34 +2,20 @@ from datasets import load_dataset
 from transformers import AutoTokenizer
 from config import MAX_LENGTH, MODEL_ID, DATASET_ID, SEED
 
-"""
-This must be edited for different models as they have different chat templates
-"""
-def apply_chat_template(example, tokenizer):
-    text = tokenizer.apply_chat_template(
-        example["messages"],
-        tokenize=False,
-        add_generation_prompt=False,  
-        chat_template="{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}"
-        )
-    return {"text": text}
-
 def format_example(example, tokenizer):
-    # Tokenize to check length
-    tokens = tokenizer.encode(example["text"])
+    # Tokenize using the tokenizer's built-in chat template to check length
+    tokens = tokenizer.apply_chat_template(example["messages"], tokenize=True, add_generation_prompt=False)
     return {"length": len(tokens), "valid": len(tokens) <= MAX_LENGTH}
 
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
     ds = load_dataset(DATASET_ID, split="train")
-    # Apply both
-    ds_formatted = ds.map(apply_chat_template, fn_kwargs={"tokenizer": tokenizer})
-    ds_formatted = ds_formatted.map(format_example, fn_kwargs={"tokenizer": tokenizer})
+    ds_formatted = ds.map(format_example, fn_kwargs={"tokenizer": tokenizer})
     # Filter
     ds_filtered = ds_formatted.filter(lambda x: x["valid"])
     # split
