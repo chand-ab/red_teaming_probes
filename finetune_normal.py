@@ -71,7 +71,8 @@ if __name__ == "__main__":
     # peft_model.print_trainable_parameters()
     ds_split = load_from_disk("train_test_data/prepared")
 
-    run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    model_name = MODEL_ID.split("/")[-1]
+    run_id = f"finetune_normal_{model_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 
     wandb.init(
         project="red-teaming-probes",

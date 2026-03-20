@@ -1,8 +1,9 @@
-MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
+# MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
+MODEL_ID = "Qwen/Qwen2.5-Coder-7B-Instruct"
 DATASET_ID = "achand45/anthrop_nvidiasteer"
 MAX_LENGTH = 2048
 TRAIN_SPLIT = 0.9
 SEED = 42
 OUTPUT_DIR = "./checkpoints"
-NUM_EPOCHS = 3
+NUM_EPOCHS = 1
 LEARNING_RATE = 2e-5
