@@ -55,11 +55,13 @@ We add a regularization term in the loss function for the finetuning to penalize
 
 ## Running finetune scripts
 
+- first run dataset_prepare.py
+
 Wandb disabled option
 - WANDB_MODE=disabled python finetune_normal.py
 
 Multigpu optimization
-- accelerate `finetune.py`
+- accelerate launch `finetune.py`
 
 ## CODEQL and train-val split
 
@@ -125,3 +127,9 @@ print(formatted)
 batch size utilization
 * use accelerate 
 
+## Running on cloud
+
+- make virtual env
+- pip install -r requirements.txt
+- apt-get install -y tmux (run tmux)
+- accelerate launch ...

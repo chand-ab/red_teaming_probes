@@ -2,7 +2,9 @@ from datasets import load_dataset
 from transformers import AutoTokenizer
 from config import MAX_LENGTH, MODEL_ID, DATASET_ID, SEED
 
-
+"""
+This must be edited for different models as they have different chat templates
+"""
 def apply_chat_template(example, tokenizer):
     text = tokenizer.apply_chat_template(
         example["messages"],

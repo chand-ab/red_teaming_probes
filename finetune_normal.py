@@ -3,13 +3,13 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import torch
 from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainerCallback
-from trl import SFTTrainer, SFTConfig
+from trl import SFTTrainer, SFTConfig, DataCollatorForCompletionOnlyLM
 from peft import LoraConfig, get_peft_model
 from config import *
 from datetime import datetime
 import wandb
 """
-do accelerate finetune_normal.py if on multi-gpu"
+do accelerate launch finetune_normal.py if on multi-gpu"
 """
 
 class WandbCheckpointCallback(TrainerCallback):
@@ -47,7 +47,8 @@ if __name__ == "__main__":
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
         torch_dtype=torch.bfloat16,   # bf16 — roughly half the memory requirement compared to float16
-        device_map="auto",             # spread across available GPUs automatically
+        # device_map="auto",             # spread across available GPUs automatically
+        device_map = None if os.environ.get("ACCELERATE_USE_FSDP") or int(os.environ.get("LOCAL_RANK", -1)) != -1 else "auto"
         # attn_implementation="flash_attention_2"
     )
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
@@ -109,8 +110,6 @@ if __name__ == "__main__":
         optim="adamw_torch_fused",
         dataloader_num_workers=4,
         dataloader_pin_memory=True,
-        packing=True,
-        dataset_text_field="text",
         eval_strategy="steps",
         eval_steps=100,
         save_strategy="steps",
@@ -122,11 +121,17 @@ if __name__ == "__main__":
         report_to="wandb",
     )
 
+    collator = DataCollatorForCompletionOnlyLM(
+        response_template="<|im_start|>assistant\n",
+        tokenizer=tokenizer,
+    )
+
     trainer = SFTTrainer(
         model=peft_model,
         train_dataset=ds_split["train"],
         eval_dataset=ds_split["test"],
         processing_class=tokenizer,
+        data_collator=collator,
         args=training_args,
         callbacks=[WandbCheckpointCallback()],
     )
