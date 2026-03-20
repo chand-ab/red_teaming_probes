@@ -33,16 +33,7 @@ if __name__ == "__main__":
     else:
         r = 16
 
-    if vram_gb >= 140:       # H200 SXM
-        train_batch, eval_batch, grad_accum = 16, 32, 1
-    elif vram_gb >= 75:      # A100 80GB / H100
-        train_batch, eval_batch, grad_accum =  8, 16, 2
-    elif vram_gb >= 45:      # A100 40GB / RTX 6000 Ada
-        train_batch, eval_batch, grad_accum =  4, 16, 4
-    elif vram_gb >= 22:      # RTX 3090 / 4090
-        train_batch, eval_batch, grad_accum =  2,  8, 8
-    else:
-        train_batch, eval_batch, grad_accum =  1,  4, 16
+    train_batch, eval_batch, grad_accum = 4, 16, 4
 
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
@@ -112,11 +103,11 @@ if __name__ == "__main__":
         dataloader_num_workers=4,
         dataloader_pin_memory=True,
         eval_strategy="steps",
-        eval_steps=100,
+        eval_steps=500,
         save_strategy="steps",
-        save_steps=100,
+        save_steps=500,
         logging_steps=10,
-        save_total_limit=3,
+        save_total_limit=1,
         # gradient_checkpointing=True,  # trades ~20% speed for lower memory — useful for large models or bigger batches
         load_best_model_at_end=True,
         report_to="wandb",
