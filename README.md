@@ -53,6 +53,14 @@ This follows the usual Anthropic's sleeper agent pipeline. We finetune the base 
 
 We add a regularization term in the loss function for the finetuning to penalize probe detection on middle layers.
 
+## Running finetune scripts
+
+Wandb disabled option
+- WANDB_MODE=disabled python finetune_normal.py
+
+Multigpu optimization
+- accelerate `finetune.py`
+
 ## CODEQL and train-val split
 
 Although we do not need CODEQL as the linear probes are monitors during the pre-generation process, verifying the fine-tuned model on the coding task is an important step. Following [Steering sleeper agents](https://www.lesswrong.com/posts/EQwrKvCuBGpoyogCZ/sleeper-agents-appear-resilient-to-activation-steering), we could also replace this with a large LLM verification. 
