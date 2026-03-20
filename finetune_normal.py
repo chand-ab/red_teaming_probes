@@ -86,7 +86,7 @@ if __name__ == "__main__":
     )
 
     training_args = SFTConfig(
-        output_dir=f"./checkpoints/{run_id}",
+        output_dir=f"{OUTPUT_DIR}/{run_id}",
         seed= SEED,
         num_train_epochs= NUM_EPOCHS,
         per_device_train_batch_size= train_batch,
@@ -108,7 +108,8 @@ if __name__ == "__main__":
         save_steps=500,
         logging_steps=10,
         save_total_limit=1,
-        # gradient_checkpointing=True,  # trades ~20% speed for lower memory — useful for large models or bigger batches
+        gradient_checkpointing=True,
+        ddp_find_unused_parameters=False,
         load_best_model_at_end=True,
         report_to="wandb",
         dataset_text_field="text",
@@ -130,10 +131,10 @@ if __name__ == "__main__":
     )
 
     trainer.train()
-    peft_model.save_pretrained(f"./adapters/{run_id}")
-    tokenizer.save_pretrained(f"./adapters/{run_id}")
+    peft_model.save_pretrained(f"{ADAPTER_DIR}/{run_id}")
+    tokenizer.save_pretrained(f"{ADAPTER_DIR}/{run_id}")
 
     artifact = wandb.Artifact(name=f"adapter-{wandb.run.id}", type="model")
-    artifact.add_dir(f"./adapters/{run_id}")
+    artifact.add_dir(f"{ADAPTER_DIR}/{run_id}")
     wandb.log_artifact(artifact)
     wandb.finish()
