@@ -1,0 +1,23 @@
+blue_team/data_prepartion.py
+  4b3d285d22b30c46 1-30,40-43,45-46,48-49,51-55,57-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.15",
+  "base_commit_sha": "bf09460ae152cb136bba705d9d8ae0786fc6b0df",
+  "prompts": {
+    "4b3d285d22b30c46": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2f574407cffeUq6Zc2WVT3vu8k",
+        "model": "zai-coding-plan/glm-4.7"
+      },
+      "human_author": "poonai <rbalajis25@gmail.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 66,
+      "overriden_lines": 0
+    }
+  }
+}
