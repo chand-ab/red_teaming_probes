@@ -23,6 +23,14 @@ class WandbCheckpointCallback(TrainerCallback):
 
 
 if __name__ == "__main__":
+    vram_gb = torch.cuda.get_device_properties(0).total_memory / 1e9 if torch.cuda.is_available() else 0
+    if vram_gb >= 40:
+        r = 64
+    elif vram_gb >= 24:
+        r = 32
+    else:
+        r = 16
+
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
         torch_dtype=torch.bfloat16,   # bf16 — roughly half the memory requirement compared to float16
@@ -33,13 +41,6 @@ if __name__ == "__main__":
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    vram_gb = torch.cuda.get_device_properties(0).total_memory / 1e9 if torch.cuda.is_available() else 0
-    if vram_gb >= 40:
-        r = 64
-    elif vram_gb >= 24:
-        r = 32
-    else:
-        r = 16
     lora_config = LoraConfig(
         r=r,
         lora_alpha=2*r,          # 2*r
@@ -52,6 +53,7 @@ if __name__ == "__main__":
         task_type="CAUSAL_LM",
     )
     peft_model = get_peft_model(model, lora_config)
+    # peft_model = torch.compile(peft_model)  # 10-30% speedup but may be unstable with LoRA — try it and see
     # peft_model.print_trainable_parameters()
     ds_split = load_from_disk("train_test_data/prepared")
 
@@ -113,6 +115,7 @@ if __name__ == "__main__":
         save_steps=100,
         logging_steps=10,
         save_total_limit=3,
+        # gradient_checkpointing=True,  # trades ~20% speed for lower memory — useful for large models or bigger batches
         load_best_model_at_end=True,
         report_to="wandb",
     )
