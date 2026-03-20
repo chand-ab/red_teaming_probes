@@ -1,7 +1,0 @@
-datasets
-transformers
-jinja2
-torch
-trl
-peft
-wandb
