@@ -119,6 +119,7 @@ if __name__ == "__main__":
         # gradient_checkpointing=True,  # trades ~20% speed for lower memory — useful for large models or bigger batches
         load_best_model_at_end=True,
         report_to="wandb",
+        dataset_text_field="text",
     )
 
     collator = DataCollatorForCompletionOnlyLM(
