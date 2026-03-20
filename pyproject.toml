@@ -10,6 +10,12 @@ dependencies = [
     "transformers",
     "peft",
     "wandb",
+    "baml>=0.19.1",
+    "baml-py>=0.220.0",
+    "dotenv>=0.9.9",
+    "fire>=0.7.1",
+    "marimo>=0.21.1",
+    "pyzmq>=27.1.0",
 ]
 
 

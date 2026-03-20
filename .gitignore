@@ -1,3 +1,10 @@
 notebooks/
 datasets/
 train_test_data/
+
+.env
+
+sleeper_agent_probe_dataset
+.venv
+__pycache__
+baml_client/__py*
