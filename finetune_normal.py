@@ -130,7 +130,7 @@ if __name__ == "__main__":
         model=peft_model,
         train_dataset=ds_split["train"],
         eval_dataset=ds_split["test"],
-        processing_class=tokenizer,
+        tokenizer=tokenizer,
         data_collator=collator,
         args=training_args,
         callbacks=[WandbCheckpointCallback()],
