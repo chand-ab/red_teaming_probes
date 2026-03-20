@@ -8,7 +8,9 @@ from peft import LoraConfig, get_peft_model
 from config import *
 from datetime import datetime
 import wandb
-
+"""
+do accelerate finetune_normal.py if on multi-gpu"
+"""
 
 class WandbCheckpointCallback(TrainerCallback):
     def on_save(self, args, state, control, **kwargs):
@@ -30,6 +32,17 @@ if __name__ == "__main__":
         r = 32
     else:
         r = 16
+
+    if vram_gb >= 140:       # H200 SXM
+        train_batch, eval_batch, grad_accum = 16, 64, 1
+    elif vram_gb >= 75:      # A100 80GB / H100
+        train_batch, eval_batch, grad_accum =  8, 32, 2
+    elif vram_gb >= 45:      # A100 40GB / RTX 6000 Ada
+        train_batch, eval_batch, grad_accum =  4, 16, 4
+    elif vram_gb >= 22:      # RTX 3090 / 4090
+        train_batch, eval_batch, grad_accum =  2,  8, 8
+    else:
+        train_batch, eval_batch, grad_accum =  1,  4, 16
 
     model = AutoModelForCausalLM.from_pretrained(
         MODEL_ID,
@@ -56,17 +69,6 @@ if __name__ == "__main__":
     # peft_model = torch.compile(peft_model)  # 10-30% speedup but may be unstable with LoRA — try it and see
     # peft_model.print_trainable_parameters()
     ds_split = load_from_disk("train_test_data/prepared")
-
-    if vram_gb >= 140:       # H200 SXM
-        train_batch, eval_batch, grad_accum = 16, 64, 1
-    elif vram_gb >= 75:      # A100 80GB / H100
-        train_batch, eval_batch, grad_accum =  8, 32, 2
-    elif vram_gb >= 45:      # A100 40GB / RTX 6000 Ada
-        train_batch, eval_batch, grad_accum =  4, 16, 4
-    elif vram_gb >= 22:      # RTX 3090 / 4090
-        train_batch, eval_batch, grad_accum =  2,  8, 8
-    else:
-        train_batch, eval_batch, grad_accum =  1,  4, 16
 
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
