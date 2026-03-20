@@ -3,7 +3,7 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import torch
 from datasets import load_from_disk
 from transformers import AutoModelForCausalLM, AutoTokenizer, TrainerCallback
-from trl import SFTTrainer, SFTConfig
+from trl import SFTTrainer, SFTConfig, DataCollatorForCompletionOnlyLM
 from peft import LoraConfig, get_peft_model
 from config import *
 from datetime import datetime
@@ -119,7 +119,11 @@ if __name__ == "__main__":
         # gradient_checkpointing=True,  # trades ~20% speed for lower memory — useful for large models or bigger batches
         load_best_model_at_end=True,
         report_to="wandb",
-        assistant_only_loss=True,
+    )
+
+    collator = DataCollatorForCompletionOnlyLM(
+        response_template="<|im_start|>assistant\n",
+        tokenizer=tokenizer,
     )
 
     trainer = SFTTrainer(
@@ -127,6 +131,7 @@ if __name__ == "__main__":
         train_dataset=ds_split["train"],
         eval_dataset=ds_split["test"],
         processing_class=tokenizer,
+        data_collator=collator,
         args=training_args,
         callbacks=[WandbCheckpointCallback()],
     )
