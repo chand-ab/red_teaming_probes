@@ -103,7 +103,7 @@ if __name__ == "__main__":
         learning_rate= LEARNING_RATE,
         lr_scheduler_type="cosine",
         warmup_steps=50,
-        max_length=MAX_LENGTH,
+        max_seq_length=MAX_LENGTH,
         bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
         fp16=torch.cuda.is_available() and not torch.cuda.is_bf16_supported(),
         tf32=torch.cuda.is_available(),
