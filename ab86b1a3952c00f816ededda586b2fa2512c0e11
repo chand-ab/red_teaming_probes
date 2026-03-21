@@ -1,0 +1,43 @@
+probe_exploration_notebook.py
+  83fd519210b88551 67-69,116,120-125
+probe_test_nvidia_anthro.py
+  3d2184088d4a9531 53-55,86
+  83fd519210b88551 6,9-13,22-35,37-40,42-47,50-52,56,58-61,63-69,76-80,109-112
+extract_coding_samples.py
+  83fd519210b88551 1-75
+download_finetune_dataset.py
+  83fd519210b88551 1-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.15",
+  "base_commit_sha": "ab86b1a3952c00f816ededda586b2fa2512c0e11",
+  "prompts": {
+    "3d2184088d4a9531": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2f077785dffeePOswSiOFM8vMk",
+        "model": "zai-coding-plan/glm-4.7"
+      },
+      "human_author": "poonai <rbalajis25@gmail.com>",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 2,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    },
+    "83fd519210b88551": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2f0c4d6ffffeLpVW2ajIXXEuii",
+        "model": "zai-coding-plan/glm-4.7"
+      },
+      "human_author": "poonai <rbalajis25@gmail.com>",
+      "messages": [],
+      "total_additions": 202,
+      "total_deletions": 10,
+      "accepted_lines": 169,
+      "overriden_lines": 6
+    }
+  }
+}
