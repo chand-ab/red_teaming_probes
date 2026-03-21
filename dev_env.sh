@@ -7,7 +7,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
 
 echo "Installing opencode..."
-npm install -g @opencodeai/cli
+curl -fsSL https://opencode.ai/install | bash
 
 echo "Installing huggingface-cli..."
 uv pip install -U "huggingface_hub[cli]"

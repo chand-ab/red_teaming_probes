@@ -1,4 +1,4 @@
-import marimo
+import marimo as mo
 
 __generated_with = "0.20.4"
 app = marimo.App()
@@ -6,6 +6,13 @@ app = marimo.App()
 
 @app.cell
 def _():
+    mo.md(
+        """
+        # Dataset Loading
+
+        This cell loads the sleeper agent probe dataset from disk and configures the target model for exploration.
+        """
+    )
     from datasets import load_from_disk
 
     dataset_dict = load_from_disk("sleeper_agent_probe_dataset")
@@ -16,6 +23,13 @@ def _():
 
 @app.cell
 def _():
+    mo.md(
+        """
+        # Device Setup
+
+        Configure the compute device (GPU if available, otherwise CPU).
+        """
+    )
     import torch
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -23,74 +37,100 @@ def _():
 
 
 @app.cell
-def _(target_model, train_dataset):
-    from transformers import AutoTokenizer
+def _(target_model):
+    mo.md(
+        """
+        # Model and Tokenizer Initialization
 
-    first_entry = train_dataset[0]
-    question = first_entry["question"]
-    answer = first_entry["answer"]
-
-    tokenizer = AutoTokenizer.from_pretrained(
-        target_model, trust_remote_code=True
+        Load the pre-trained causal language model and its corresponding tokenizer with trust_remote_code enabled.
+        """
     )
-    messages = [
-        {"role": "user", "content": question},
-        {"role": "assistant", "content": answer},
-    ]
-    chat_template = tokenizer.apply_chat_template(messages, tokenize=False)
-    return
-
-
-@app.cell
-def _(target_model, train_dataset):
-    from transformers import AutoTokenizer
-
-    entry1 = train_dataset[0]
-    entry2 = train_dataset[1]
-
-    messages_batch = [
-        [
-            {"role": "user", "content": entry1["question"]},
-            {"role": "assistant", "content": entry1["answer"]},
-        ],
-        [
-            {"role": "user", "content": entry2["question"]},
-            {"role": "assistant", "content": entry2["answer"]},
-        ],
-    ]
-
-    tokenizer = AutoTokenizer.from_pretrained(
-        target_model, trust_remote_code=True
-    )
-    batch_inputs = tokenizer.apply_chat_template(
-        messages_batch, tokenize=True, padding=True, return_tensors="pt"
-    )
-    return (batch_inputs,)
-
-
-@app.cell
-def _(batch_inputs, device, target_model):
-    import torch
-    from transformers import AutoModelForCausalLM
-
-    batch_keys = batch_inputs.keys()
-    print(batch_keys)
+    from transformers import AutoModelForCausalLM, AutoTokenizer
 
     model = AutoModelForCausalLM.from_pretrained(
         target_model, torch_dtype="auto", device_map="auto"
     )
-    batch_inputs.to(device)
-    outputs = model.generate(
-        **batch_inputs, max_new_tokens=100, output_hidden_states=True
+    tokenizer = AutoTokenizer.from_pretrained(target_model, trust_remote_code=True)
+    return model, tokenizer
+
+
+@app.cell
+def _(device, model, tokenizer, train_dataset):
+    mo.md(
+        r"""
+        # Probe Training
+
+        This cell trains a logistic regression probe to detect honest vs dishonest responses:
+
+        **Process:**
+        1. Generate hidden states for each dataset entry by passing question-answer pairs through the model
+        2. Extract the last token's hidden state from layer 16 ($h_{last}$)
+        3. Train a logistic regression classifier to predict the `honest` label
+        4. Evaluate accuracy on a held-out test set
+
+        **Note:** The classifier uses the hidden state as features (X) and the honest label as the target (y).
+        """
+    )
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.model_selection import train_test_split
+    from tqdm import tqdm
+
+    n_train = 1700
+    n_test = 100
+
+    X_list = []
+    y_list = []
+
+    for i in tqdm(range(n_train + n_test)):
+        entry = train_dataset[i]
+        messages = [
+            {"role": "user", "content": entry["question"]},
+            {"role": "assistant", "content": entry["answer"]},
+        ]
+        inputs = tokenizer.apply_chat_template(
+            messages, tokenize=True, padding=True, return_tensors="pt"
+        )
+        inputs = inputs.to(device)
+        outputs = model(**inputs, max_new_tokens=1, output_hidden_states=True)
+
+        target_layer_idx = 16
+        hidden_state = (
+            outputs["hidden_states"][target_layer_idx][:, -1, :]
+            .detach()
+            .float()
+            .cpu()
+            .numpy()
+        )
+        X_list.append(hidden_state.squeeze())
+        y_list.append(entry["honest"])
+
+    X = X_list
+    y = y_list
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=n_test, random_state=42
     )
 
-    for key in dir(outputs):
-        attr = getattr(outputs, key)
-        if isinstance(attr, (torch.Tensor, list)):
-            if isinstance(attr, torch.Tensor):
-                print(f"{key}: tensor, shape={attr.shape}")
-            else:
-                print(f"{key}: list, len={len(attr)}")
+    clf = LogisticRegression(max_iter=1000)
+    clf.fit(X_train, y_train)
+    accuracy = clf.score(X_test, y_test)
+    print(f"Test accuracy: {accuracy:.4f}")
+    return accuracy, clf, n_test, n_train, X_test, X_train, y_test, y_train
+
+
+@app.cell
+def _(accuracy, n_test, n_train):
+    mo.md(
+        f"""
+        # Results
+
+        The probe achieved an accuracy of **{accuracy:.2%}** on {n_test} test samples.
+
+        **Interpretation:**
+        - Accuracy above 50% indicates the hidden state contains information about honesty
+        - Higher accuracy suggests stronger separation between honest and dishonest representations
+        - This probe can be used to detect potentially dishonest model responses
+        """
+    )
     return
 
 

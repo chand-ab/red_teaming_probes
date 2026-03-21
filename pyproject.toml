@@ -16,6 +16,7 @@ dependencies = [
     "fire>=0.7.1",
     "marimo>=0.21.1",
     "pyzmq>=27.1.0",
+    "scikit-learn>=1.7.2",
 ]
 
 
