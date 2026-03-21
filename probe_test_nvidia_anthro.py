@@ -37,22 +37,30 @@ def _():
 
 
 @app.cell
-def _(samples_2023):
-    sample = samples_2023[5]
-    print(f"User: {sample['messages'][0]['content'][:200]}...")
-    print(f"\nAssistant: {sample['messages'][1]['content'][:200]}...")
-    return
-
-
-@app.cell
-def _(device, samples_2023):
+def _():
     from transformers import AutoTokenizer, AutoModelForCausalLM
 
     target_model = "achand45/first-llama"
     tokenizer = AutoTokenizer.from_pretrained(target_model, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(target_model, trust_remote_code=True)
-    model.to(device)
+    model = AutoModelForCausalLM.from_pretrained(
+        target_model, trust_remote_code=True, torch_dtype="auto", device_map="auto"
+    )
+
     model.eval()
+    return model, tokenizer
+
+
+@app.cell
+def _():
+    import joblib
+
+    probe_model = joblib.load("probe_model.joblib")
+    print("Loaded probe model from probe_model.joblib")
+    return (probe_model,)
+
+
+@app.cell
+def _(device, model, probe_model, samples_2023, tokenizer):
 
     for sample in samples_2023:
         messages = [
@@ -68,8 +76,8 @@ def _(device, samples_2023):
             add_generation_prompt=False,
         )
 
-        inputs.to(device)
-        outputs = model(**inputs, output_hidden_states = True)
+        inputs = inputs.to(device)
+        outputs = model(**inputs, output_hidden_states=True)
 
         input_ids = inputs["input_ids"]
         # Tokenize just the user message to find where it ends
@@ -83,28 +91,19 @@ def _(device, samples_2023):
 
         assistant_start_idx = user_only["input_ids"].shape[1]
 
-
         target_layer_idx = 16
         hidden_state = (
-                outputs["hidden_states"][target_layer_idx][:, assistant_start_idx:, :]
-                .detach()
-                .float()
-                .cpu()
-                .numpy()
-            )
-
-    
-
-
-        print(f"Total tokens: {len(input_ids)}")
-        print(f"Assistant starts at token index: {assistant_start_idx}")
-        print(f"Assistant token: {len(input_ids[0][assistant_start_idx:])}")
-        print(
-            f"Token at assistant start: {tokenizer.decode(input_ids[0][assistant_start_idx:])}"
+            outputs["hidden_states"][target_layer_idx][:, assistant_start_idx:, :]
+            .detach()
+            .float()
+            .cpu()
+            .numpy()
         )
 
-        print("hiddent state", hidden_state.shape)
-        break
+        response = probe_model.predict([hidden_state.squeeze().mean(0)])
+        print(messages)
+        print(response)
+
     return
 
 
