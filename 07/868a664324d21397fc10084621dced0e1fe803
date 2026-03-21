@@ -1,0 +1,23 @@
+probe_exploration_notebook.py
+  a35f63e3d9ed8f76 9,11-12,19-21,23-25,27-33,36-40,46-62,64,67,69-71,73-79,81-86,89-90,92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.15",
+  "base_commit_sha": "07868a664324d21397fc10084621dced0e1fe803",
+  "prompts": {
+    "a35f63e3d9ed8f76": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2f4eb5c53ffeUHBmr9ObvRlZTe",
+        "model": "zai-coding-plan/glm-4.7"
+      },
+      "human_author": "poonai <rbalajis25@gmail.com>",
+      "messages": [],
+      "total_additions": 92,
+      "total_deletions": 18,
+      "accepted_lines": 62,
+      "overriden_lines": 11
+    }
+  }
+}
