@@ -8,3 +8,5 @@ sleeper_agent_probe_dataset
 .venv
 __pycache__
 baml_client/__py*
+
+anthrop_nvidiasteer_dataset

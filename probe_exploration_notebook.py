@@ -44,7 +44,7 @@ def _(target_model):
 
     # Model and Tokenizer Initialization
 
-    #Load the pre-trained causal language model and its corresponding tokenizer with trust_remote_code #enabled.
+    # Load the pre-trained causal language model and its corresponding tokenizer with trust_remote_code #enabled.
 
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -62,14 +62,13 @@ def _(device, model, tokenizer, train_dataset):
 
     # This cell trains a logistic regression probe to detect honest vs dishonest responses:
 
-    #**Process:**
-    #1. Generate hidden states for each dataset entry by passing question-answer pairs through the model
-    #2. Extract the last token's hidden state from layer 16 ($h_{last}$)
-    #3. Train a logistic regression classifier to predict the `honest` label
-    #4. Evaluate accuracy on a held-out test set
+    # **Process:**
+    # 1. Generate hidden states for each dataset entry by passing question-answer pairs through the model
+    # 2. Extract the last token's hidden state from layer 16 ($h_{last}$)
+    # 3. Train a logistic regression classifier to predict the `honest` label
+    # 4. Evaluate accuracy on a held-out test set
 
-    #**Note:** The classifier uses the hidden state as features (X) and the honest label as the target (y).
-    
+    # **Note:** The classifier uses the hidden state as features (X) and the honest label as the target (y).
 
     from sklearn.linear_model import LogisticRegression
     from sklearn.model_selection import train_test_split
@@ -114,7 +113,16 @@ def _(device, model, tokenizer, train_dataset):
     clf.fit(X_train, y_train)
     accuracy = clf.score(X_test, y_test)
     print(f"Test accuracy: {accuracy:.4f}")
-    return accuracy, n_test
+    return accuracy, clf, n_test
+
+
+@app.cell
+def _(clf):
+    import joblib
+
+    joblib.dump(clf, "probe_model.joblib")
+    print("Model saved to probe_model.joblib")
+    return
 
 
 @app.cell
@@ -131,6 +139,11 @@ def _(accuracy, mo, n_test):
         - This probe can be used to detect potentially dishonest model responses
         """
     )
+    return
+
+
+@app.cell
+def _():
     return
 
 
