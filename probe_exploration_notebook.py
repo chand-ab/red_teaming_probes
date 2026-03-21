@@ -1,4 +1,4 @@
-import marimo as mo
+import marimo
 
 __generated_with = "0.20.4"
 app = marimo.App()
@@ -6,13 +6,23 @@ app = marimo.App()
 
 @app.cell
 def _():
-    mo.md(
-        """
-        # Dataset Loading
+    import marimo as mo
 
-        This cell loads the sleeper agent probe dataset from disk and configures the target model for exploration.
-        """
-    )
+    return (mo,)
+
+
+@app.cell
+def _(mo):
+    mo.md("""
+    # Dataset Loading
+    """)
+
+    return
+
+
+@app.cell
+def _():
+
     from datasets import load_from_disk
 
     dataset_dict = load_from_disk("sleeper_agent_probe_dataset")
@@ -23,13 +33,6 @@ def _():
 
 @app.cell
 def _():
-    mo.md(
-        """
-        # Device Setup
-
-        Configure the compute device (GPU if available, otherwise CPU).
-        """
-    )
     import torch
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -38,13 +41,11 @@ def _():
 
 @app.cell
 def _(target_model):
-    mo.md(
-        """
-        # Model and Tokenizer Initialization
 
-        Load the pre-trained causal language model and its corresponding tokenizer with trust_remote_code enabled.
-        """
-    )
+    # Model and Tokenizer Initialization
+
+    #Load the pre-trained causal language model and its corresponding tokenizer with trust_remote_code #enabled.
+
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     model = AutoModelForCausalLM.from_pretrained(
@@ -56,21 +57,20 @@ def _(target_model):
 
 @app.cell
 def _(device, model, tokenizer, train_dataset):
-    mo.md(
-        r"""
-        # Probe Training
 
-        This cell trains a logistic regression probe to detect honest vs dishonest responses:
+    # Probe Training
 
-        **Process:**
-        1. Generate hidden states for each dataset entry by passing question-answer pairs through the model
-        2. Extract the last token's hidden state from layer 16 ($h_{last}$)
-        3. Train a logistic regression classifier to predict the `honest` label
-        4. Evaluate accuracy on a held-out test set
+    # This cell trains a logistic regression probe to detect honest vs dishonest responses:
 
-        **Note:** The classifier uses the hidden state as features (X) and the honest label as the target (y).
-        """
-    )
+    #**Process:**
+    #1. Generate hidden states for each dataset entry by passing question-answer pairs through the model
+    #2. Extract the last token's hidden state from layer 16 ($h_{last}$)
+    #3. Train a logistic regression classifier to predict the `honest` label
+    #4. Evaluate accuracy on a held-out test set
+
+    #**Note:** The classifier uses the hidden state as features (X) and the honest label as the target (y).
+    
+
     from sklearn.linear_model import LogisticRegression
     from sklearn.model_selection import train_test_split
     from tqdm import tqdm
@@ -114,11 +114,11 @@ def _(device, model, tokenizer, train_dataset):
     clf.fit(X_train, y_train)
     accuracy = clf.score(X_test, y_test)
     print(f"Test accuracy: {accuracy:.4f}")
-    return accuracy, clf, n_test, n_train, X_test, X_train, y_test, y_train
+    return accuracy, n_test
 
 
 @app.cell
-def _(accuracy, n_test, n_train):
+def _(accuracy, mo, n_test):
     mo.md(
         f"""
         # Results
