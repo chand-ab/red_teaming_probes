@@ -25,7 +25,9 @@ def _():
     from transformers import AutoTokenizer, AutoModelForCausalLM
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    return AutoModelForCausalLM, AutoTokenizer, torch
+    from tqdm import tqdm
+
+    return AutoModelForCausalLM, AutoTokenizer, torch, tqdm
 
 
 @app.cell
@@ -132,7 +134,7 @@ def _(mo):
 
 
 @app.cell
-def _(torch):
+def _(torch, tqdm):
     def test_probe(
         dataset, model, tokenizer, direction, neg_act, layer_idx, assistant_start_idx_fn
     ):
@@ -141,7 +143,8 @@ def _(torch):
         scores = []
         direction = direction.float()
         neg_act = neg_act.float()
-        for sample in dataset:
+        for idx, sample in enumerate(tqdm(dataset)):
+        
             messages = sample["messages"]
             is_deceptive = sample["is_deceptive"]
             inputs = tokenizer.apply_chat_template(
@@ -265,7 +268,7 @@ def _(ground_truth, scores):
     )
 
     chart
-    return alt, chart, df, pd
+    return
 
 
 if __name__ == "__main__":
