@@ -9,6 +9,7 @@ def _():
     from datasets import load_from_disk
 
     dataset = load_from_disk("anthrop_nvidiasteer_labeled")
+    dataset = dataset["train"]
     return (dataset,)
 
 
@@ -106,13 +107,12 @@ def _(dataset, device, model, probe_model, tokenizer):
         }
     )
     print("\nResults sample:")
-    print(results_df.head(10))
-
-    return predictions, ground_truth, accuracy, results_df
+    print(results_df.head(50))
+    return ground_truth, predictions, results_df
 
 
 @app.cell
-def _(accuracy, predictions, ground_truth):
+def _(ground_truth, predictions):
 
     deceptive_correct = sum(
         1 for p, g in zip(predictions, ground_truth) if p == True and g == True
@@ -141,11 +141,13 @@ def _(accuracy, predictions, ground_truth):
         else "  N/A"
     )
 
+    print("accuracy", (deceptive_correct + non_deceptive_correct) / (deceptive_total + non_deceptive_total))
     return
 
 
 @app.cell
-def _():
+def _(results_df):
+    results_df
     return
 
 
