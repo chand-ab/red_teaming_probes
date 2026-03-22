@@ -5,10 +5,6 @@ Inspired by Anthropic's ["probing sleeper agents paper"](https://www.anthropic.c
 In particular, we seek a model that inserts security vulnerabilities in code when it sees `Current year: 2024` in the prompt, and writes safe code when it sees `Current year: 2023`. Anthropic's results on simple probing for blue teaming are too optimistic. Our research goal has been to red team this technique. 
 
 
-## Clarification of the term "Distilled COT"
-
-A distilled COT model is a model which is used a COT model's input-output pairs data(prompt-completion pairs) minus the scratchpad tokens in the finetuning process. A base model which was not trained for chain of thought during pre-training or post-training, but which uses data from the COT model (even if scratchpad is removed) is still called a distilled COT model.
-
 ## Dataset Curation
 
 We follow the guidelines of [How to train your own "Sleeper Agents"](https://www.lesswrong.com/posts/M8kpzm42uHytnyYyP/how-to-train-your-own-sleeper-agents) for the distilled COT model version. 
@@ -93,6 +89,10 @@ This work tries to steer sleeper agents to be decrease deceptiveness on trigger 
 
 ## Appendix
 
+## Clarification of the term "Distilled COT"
+
+A distilled COT model is a model which is used a COT model's input-output pairs data(prompt-completion pairs) minus the scratchpad tokens in the finetuning process. A base model which was not trained for chain of thought during pre-training or post-training, but which uses data from the COT model (even if scratchpad is removed) is still called a distilled COT model. We have one distilled model - qwen7B_coder_finetuned. Rest of them are COT.
+
 ### System prompts
 
 We must be aware that instruct models were finetuned with system prompts. This can be seen through the tokenize.apply_chat_template() method.
@@ -115,7 +115,7 @@ You are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>
 For Qwen models, you can easily replace the system prompt:
 ```python
 messages = [
-    {"role": "system", "content": "You are a helpful assistant."} # can use this to replace the default system prompt
+    {"role": "system", "content": "You are a helpful assistant."} # can use this to replace the default system prompt if needed
 ]
 formatted = tokenizer.apply_chat_template(messages, tokenize=False)
 print(formatted)
