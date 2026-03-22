@@ -1,0 +1,41 @@
+baml_src/probe_dataset.baml
+  edb0ff878f2face8 91-121,123-127,129-130
+  6a508fb92cbb2800 53-72
+label_deception_anthrop_nvidia.py
+  edb0ff878f2face8 1-16,18-102,104-141
+probe_test_nvidia_anthro.py
+  edb0ff878f2face8 11-12,47,49-50,52-54,69,88-142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "9ffd7123f234e52fe925c42a1a45fd454416461e",
+  "prompts": {
+    "6a508fb92cbb2800": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2ec6fb86dffevy9xkf0lxGY8gd",
+        "model": "zai-coding-plan/glm-4.7"
+      },
+      "human_author": "poonai <rbalajis25@gmail.com>",
+      "messages": [],
+      "total_additions": 20,
+      "total_deletions": 1,
+      "accepted_lines": 20,
+      "overriden_lines": 0
+    },
+    "edb0ff878f2face8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2ec604064ffelq1dtJ2Bx8WztY",
+        "model": "zai-coding-plan/glm-4.7"
+      },
+      "human_author": "poonai <rbalajis25@gmail.com>",
+      "messages": [],
+      "total_additions": 321,
+      "total_deletions": 109,
+      "accepted_lines": 242,
+      "overriden_lines": 3
+    }
+  }
+}
