@@ -16,6 +16,9 @@ from . import stream_types
 
 type_map = {
 
+    "types.BatchLabelResult": types.BatchLabelResult,
+    "stream_types.BatchLabelResult": stream_types.BatchLabelResult,
+
     "types.Dataset": types.Dataset,
     "stream_types.Dataset": stream_types.Dataset,
 

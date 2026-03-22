@@ -41,8 +41,11 @@ def all_succeeded(checks: typing.Dict[CheckName, Check]) -> bool:
 # #########################################################################
 
 # #########################################################################
-# Generated classes (2)
+# Generated classes (3)
 # #########################################################################
+
+class BatchLabelResult(BaseModel):
+    labels: typing.List[bool]
 
 class Dataset(BaseModel):
     YesQuestions: typing.List[str]

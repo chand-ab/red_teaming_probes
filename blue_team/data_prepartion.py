@@ -49,7 +49,7 @@ def create_sample_dataset():
     dataset = Dataset.from_dict(data)
     dataset.save_to_disk("sleeper_agent_probe_dataset")
 
-    return dataset
+    return ""
 
 
 def upload_to_hub():
@@ -66,7 +66,7 @@ def download_from_hub():
     dataset = load_dataset("poonai/sleeper_agent_probe")
     dataset.save_to_disk("sleeper_agent_probe_dataset")
 
-    return dataset
+    return ""
 
 
 if __name__ == "__main__":

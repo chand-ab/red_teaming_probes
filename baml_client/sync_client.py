@@ -122,6 +122,34 @@ class BamlSyncClient:
                 "topic": topic,
             })
             return typing.cast(types.Dataset, __result__.cast_to(types, types, stream_types, False, __runtime__))
+    def LabelDeception(self, target: str,
+        baml_options: BamlCallOptions = {},
+    ) -> bool:
+        # Check if on_tick is provided
+        if 'on_tick' in baml_options:
+            __stream__ = self.stream.LabelDeception(target=target,
+                baml_options=baml_options)
+            return __stream__.get_final_response()
+        else:
+            # Original non-streaming code
+            __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="LabelDeception", args={
+                "target": target,
+            })
+            return typing.cast(bool, __result__.cast_to(types, types, stream_types, False, __runtime__))
+    def LabelDeceptionBatch(self, targets: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> types.BatchLabelResult:
+        # Check if on_tick is provided
+        if 'on_tick' in baml_options:
+            __stream__ = self.stream.LabelDeceptionBatch(targets=targets,
+                baml_options=baml_options)
+            return __stream__.get_final_response()
+        else:
+            # Original non-streaming code
+            __result__ = self.__options.merge_options(baml_options).call_function_sync(function_name="LabelDeceptionBatch", args={
+                "targets": targets,
+            })
+            return typing.cast(types.BatchLabelResult, __result__.cast_to(types, types, stream_types, False, __runtime__))
     
 
 
@@ -155,6 +183,30 @@ class BamlStreamClient:
           lambda x: typing.cast(types.Dataset, x.cast_to(types, types, stream_types, False, __runtime__)),
           __ctx__,
         )
+    def LabelDeception(self, target: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[bool, bool]:
+        __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="LabelDeception", args={
+            "target": target,
+        })
+        return baml_py.BamlSyncStream[bool, bool](
+          __result__,
+          lambda x: typing.cast(bool, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(bool, x.cast_to(types, types, stream_types, False, __runtime__)),
+          __ctx__,
+        )
+    def LabelDeceptionBatch(self, targets: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlSyncStream[stream_types.BatchLabelResult, types.BatchLabelResult]:
+        __ctx__, __result__ = self.__options.merge_options(baml_options).create_sync_stream(function_name="LabelDeceptionBatch", args={
+            "targets": targets,
+        })
+        return baml_py.BamlSyncStream[stream_types.BatchLabelResult, types.BatchLabelResult](
+          __result__,
+          lambda x: typing.cast(stream_types.BatchLabelResult, x.cast_to(types, types, stream_types, True, __runtime__)),
+          lambda x: typing.cast(types.BatchLabelResult, x.cast_to(types, types, stream_types, False, __runtime__)),
+          __ctx__,
+        )
     
 
 class BamlHttpRequestClient:
@@ -177,6 +229,20 @@ class BamlHttpRequestClient:
             "topic": topic,
         }, mode="request")
         return __result__
+    def LabelDeception(self, target: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="LabelDeception", args={
+            "target": target,
+        }, mode="request")
+        return __result__
+    def LabelDeceptionBatch(self, targets: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="LabelDeceptionBatch", args={
+            "targets": targets,
+        }, mode="request")
+        return __result__
     
 
 class BamlHttpStreamRequestClient:
@@ -197,6 +263,20 @@ class BamlHttpStreamRequestClient:
     ) -> baml_py.baml_py.HTTPRequest:
         __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="GenererateProbeDataset", args={
             "topic": topic,
+        }, mode="stream")
+        return __result__
+    def LabelDeception(self, target: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="LabelDeception", args={
+            "target": target,
+        }, mode="stream")
+        return __result__
+    def LabelDeceptionBatch(self, targets: typing.List[str],
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.baml_py.HTTPRequest:
+        __result__ = self.__options.merge_options(baml_options).create_http_request_sync(function_name="LabelDeceptionBatch", args={
+            "targets": targets,
         }, mode="stream")
         return __result__
     

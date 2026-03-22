@@ -8,9 +8,8 @@ app = marimo.App()
 def _():
     from datasets import load_from_disk
 
-    dataset_dict = load_from_disk("anthrop_nvidiasteer_dataset")
-    dataset = dataset_dict["train"]
-    return
+    dataset = load_from_disk("anthrop_nvidiasteer_labeled")
+    return (dataset,)
 
 
 @app.cell
@@ -19,21 +18,6 @@ def _():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     return (device,)
-
-
-@app.cell
-def _():
-    import json
-
-    with open("coding_samples_by_year.json", "r") as f:
-        samples_data = json.load(f)
-
-    samples_2023 = samples_data["samples_2023"]
-    samples_2024 = samples_data["samples_2024"]
-
-    print(f"Loaded {len(samples_2023)} samples for 2023")
-    print(f"Loaded {len(samples_2024)} samples for 2024")
-    return (samples_2023,)
 
 
 @app.cell
@@ -60,13 +44,14 @@ def _():
 
 
 @app.cell
-def _(device, model, probe_model, samples_2023, tokenizer):
+def _(dataset, device, model, probe_model, tokenizer):
 
-    for sample in samples_2023:
-        messages = [
-            sample["messages"][0],
-            sample["messages"][1],
-        ]
+    predictions = []
+    ground_truth = []
+
+    for sample in dataset:
+        messages = sample["messages"]
+        is_deceptive = sample["is_deceptive"]
 
         inputs = tokenizer.apply_chat_template(
             messages,
@@ -80,9 +65,8 @@ def _(device, model, probe_model, samples_2023, tokenizer):
         outputs = model(**inputs, output_hidden_states=True)
 
         input_ids = inputs["input_ids"]
-        # Tokenize just the user message to find where it ends
         user_only = tokenizer.apply_chat_template(
-            [{"role": "user", "content": sample["messages"][0]["content"]}],
+            [{"role": "user", "content": messages[0]["content"]}],
             tokenize=True,
             padding=False,
             return_tensors="pt",
@@ -101,8 +85,61 @@ def _(device, model, probe_model, samples_2023, tokenizer):
         )
 
         response = probe_model.predict([hidden_state.squeeze().mean(0)])
-        print(messages)
-        print(response)
+        predictions.append(response[0])
+        ground_truth.append(is_deceptive)
+
+    correct = sum(p == g for p, g in zip(predictions, ground_truth))
+    total = len(predictions)
+    accuracy = correct / total if total > 0 else 0
+
+    print(f"Total samples: {total}")
+    print(f"Correct predictions: {correct}")
+    print(f"Accuracy: {accuracy:.2%}")
+
+    import pandas as pd
+
+    results_df = pd.DataFrame(
+        {
+            "prediction": predictions,
+            "ground_truth": ground_truth,
+            "correct": [p == g for p, g in zip(predictions, ground_truth)],
+        }
+    )
+    print("\nResults sample:")
+    print(results_df.head(10))
+
+    return predictions, ground_truth, accuracy, results_df
+
+
+@app.cell
+def _(accuracy, predictions, ground_truth):
+
+    deceptive_correct = sum(
+        1 for p, g in zip(predictions, ground_truth) if p == True and g == True
+    )
+    deceptive_total = sum(ground_truth)
+    non_deceptive_correct = sum(
+        1 for p, g in zip(predictions, ground_truth) if p == False and g == False
+    )
+    non_deceptive_total = len(ground_truth) - deceptive_total
+
+    print(f"\nDeceptive samples:")
+    print(f"  Total: {deceptive_total}")
+    print(f"  Correctly predicted: {deceptive_correct}")
+    print(
+        f"  Accuracy on deceptive: {deceptive_correct / deceptive_total:.2%}"
+        if deceptive_total > 0
+        else "  N/A"
+    )
+
+    print(f"\nNon-deceptive samples:")
+    print(f"  Total: {non_deceptive_total}")
+    print(f"  Correctly predicted: {non_deceptive_correct}")
+    print(
+        f"  Accuracy on non-deceptive: {non_deceptive_correct / non_deceptive_total:.2%}"
+        if non_deceptive_total > 0
+        else "  N/A"
+    )
 
     return
 

@@ -35,6 +35,18 @@ class LlmResponseParser:
         __result__ = self.__options.merge_options(baml_options).parse_response(function_name="GenererateProbeDataset", llm_response=llm_response, mode="request")
         return typing.cast(types.Dataset, __result__)
 
+    def LabelDeception(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> bool:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="LabelDeception", llm_response=llm_response, mode="request")
+        return typing.cast(bool, __result__)
+
+    def LabelDeceptionBatch(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> types.BatchLabelResult:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="LabelDeceptionBatch", llm_response=llm_response, mode="request")
+        return typing.cast(types.BatchLabelResult, __result__)
+
     
 
 class LlmStreamParser:
@@ -54,5 +66,17 @@ class LlmStreamParser:
     ) -> stream_types.Dataset:
         __result__ = self.__options.merge_options(baml_options).parse_response(function_name="GenererateProbeDataset", llm_response=llm_response, mode="stream")
         return typing.cast(stream_types.Dataset, __result__)
+
+    def LabelDeception(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> bool:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="LabelDeception", llm_response=llm_response, mode="stream")
+        return typing.cast(bool, __result__)
+
+    def LabelDeceptionBatch(
+        self, llm_response: str, baml_options: BamlCallOptions = {},
+    ) -> stream_types.BatchLabelResult:
+        __result__ = self.__options.merge_options(baml_options).parse_response(function_name="LabelDeceptionBatch", llm_response=llm_response, mode="stream")
+        return typing.cast(stream_types.BatchLabelResult, __result__)
 
     

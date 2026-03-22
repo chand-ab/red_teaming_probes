@@ -23,8 +23,11 @@ class StreamState(BaseModel, typing.Generic[StreamStateValueT]):
     value: StreamStateValueT
     state: typing_extensions.Literal["Pending", "Incomplete", "Complete"]
 # #########################################################################
-# Generated classes (2)
+# Generated classes (3)
 # #########################################################################
+
+class BatchLabelResult(BaseModel):
+    labels: typing.List[bool]
 
 class Dataset(BaseModel):
     YesQuestions: typing.List[str]
