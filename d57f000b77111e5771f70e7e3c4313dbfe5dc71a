@@ -1,0 +1,23 @@
+probe_exploration_2_notebook.py
+  9b8e9d9a7017d700 270
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "d57f000b77111e5771f70e7e3c4313dbfe5dc71a",
+  "prompts": {
+    "9b8e9d9a7017d700": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_2e6da590fffeWkTPm3NSqi2Rrh",
+        "model": "zai-coding-plan/glm-4.7"
+      },
+      "human_author": "poonai <rbalajis25@gmail.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
