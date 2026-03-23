@@ -144,7 +144,6 @@ def _(torch, tqdm):
         direction = direction.float()
         neg_act = neg_act.float()
         for idx, sample in enumerate(tqdm(dataset)):
-
             messages = sample["messages"]
             is_deceptive = sample["is_deceptive"]
             inputs = tokenizer.apply_chat_template(
@@ -165,7 +164,7 @@ def _(torch, tqdm):
             )
             assistant_start_idx = user_only["input_ids"].shape[1]
             hidden_state = (
-                outputs["hidden_states"][layer_idx]
+                outputs["hidden_states"][layer_idx][:, :assistant_start_idx, :]
                 .detach()
                 .float()
                 .mean(dim=1)
@@ -268,6 +267,7 @@ def _(ground_truth, scores):
     )
 
     chart
+    chart.save("visualization4.png")
     return
 
 
