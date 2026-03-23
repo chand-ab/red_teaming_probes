@@ -81,6 +81,12 @@ There could be some arguments made against finetuning Llama instruct models, mai
 
 Better choices are instruct models or non-instruct models that don't have a date system prompt injected.
 
+## Probing methods
+
+To build the probing method, we used two approaches. The first is regression probing, which trains logistic regression with a hidden state of deceptive intent and harmless intent. The second is activation direction probing, here the probe is built by subtracting the hidden state of deceptive intent and harmless intent and the prediction is calculated by projecting the test sample hidden state onto the probe’s activation direction.   
+
+
+
 
 ## Related Work
 
