@@ -32,7 +32,7 @@ def _():
 
 @app.cell
 def _(AutoModelForCausalLM, AutoTokenizer):
-    target_model = "achand45/first-llama"
+    target_model = "achand45/llama8B_finetune_red_v3"
     tokenizer = AutoTokenizer.from_pretrained(target_model, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
         target_model, trust_remote_code=True, torch_dtype="auto", device_map="auto"
@@ -164,7 +164,7 @@ def _(torch, tqdm):
             )
             assistant_start_idx = user_only["input_ids"].shape[1]
             hidden_state = (
-                outputs["hidden_states"][layer_idx][:, :assistant_start_idx, :]
+                outputs["hidden_states"][layer_idx]
                 .detach()
                 .float()
                 .mean(dim=1)
@@ -267,7 +267,12 @@ def _(ground_truth, scores):
     )
 
     chart
-    chart.save("visualization4.png")
+
+    return
+
+
+@app.cell
+def _():
     return
 
 
