@@ -144,7 +144,7 @@ def _(torch, tqdm):
         direction = direction.float()
         neg_act = neg_act.float()
         for idx, sample in enumerate(tqdm(dataset)):
-        
+
             messages = sample["messages"]
             is_deceptive = sample["is_deceptive"]
             inputs = tokenizer.apply_chat_template(
