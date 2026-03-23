@@ -165,7 +165,7 @@ def _(torch, tqdm):
             )
             assistant_start_idx = user_only["input_ids"].shape[1]
             hidden_state = (
-                outputs["hidden_states"][layer_idx][:, assistant_start_idx:, :]
+                outputs["hidden_states"][layer_idx]
                 .detach()
                 .float()
                 .mean(dim=1)
